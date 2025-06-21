@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivBreak</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .rounded-box {
+            width: 300px;
+            background-color: #f0f0f0;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        #soundButton,
+        #homeButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #soundButton:hover,
+        #homeButton:hover {
+            background-color: #0056b3;
+        }
+
+        .title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .image {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        .volume-control {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">CivBreak Button</div>
+        <div class="rounded-box">
+            <img id="image" class="image" src="image1.png" alt="画像">
+            <button id="soundButton">CivBreak</button>
+            <input id="volumeSlider" class="volume-control" type="range" min="0" max="1" step="0.01" value="1">
+        </div>
+        <button id="homeButton" onclick="location.href='home.html'">ホームに戻る</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var buffer;
+            var images = ['image1.png', 'image2.png'];
+            var currentImageIndex = 0;
+            var resetTimeout;
+            var gainNode = audioContext.createGain();
+
+            fetch('sound.mp3')
+                .then(response => response.arrayBuffer())
+                .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+                .then(decodedBuffer => buffer = decodedBuffer)
+                .catch(error => console.error('Error loading sound:', error));
+
+            function resetImage() {
+                document.getElementById('image').src = 'image1.png';
+                currentImageIndex = 0;
+            }
+
+            function startResetTimer() {
+                clearTimeout(resetTimeout);
+                resetTimeout = setTimeout(resetImage, 250); // 0.25秒後に画像をリセット
+            }
+
+            document.getElementById('soundButton').addEventListener('click', function () {
+                if (buffer) {
+                    var source = audioContext.createBufferSource();
+                    source.buffer = buffer;
+
+                    var randomPitch = Math.random() * 0.5 + 0.5; // 0.5 から 1 の範囲
+                    source.playbackRate.value = randomPitch;
+
+                    source.connect(gainNode).connect(audioContext.destination);
+                    source.start(0);
+                }
+
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+                document.getElementById('image').src = images[currentImageIndex];
+
+                startResetTimer(); // ボタンがクリックされるたびにリセットタイマーを再始動
+            });
+
+            document.getElementById('volumeSlider').addEventListener('input', function () {
+                gainNode.gain.value = this.value;
+            });
+
+            startResetTimer(); // ページ読み込み時にリセットタイマーを開始
+        });
+    </script>
+</body>
+
+</html>
