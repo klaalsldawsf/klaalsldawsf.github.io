@@ -83,8 +83,6 @@
         clickButton.addEventListener('click', () => {
             clickCount++;
         });
-
-        // 毎秒更新
         setInterval(() => {
             cps = clickCount;
             cpsDisplay.textContent = `CPS: ${cps}`;
