@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPS Counter</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .rounded-box {
+            width: 300px;
+            background-color: #f0f0f0;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        #clickButton,
+        #homeButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #clickButton:hover,
+        #homeButton:hover {
+            background-color: #0056b3;
+        }
+
+        .title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .cps-display {
+            font-size: 24px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">CPSカウンター</div>
+        <div class="rounded-box">
+            <button id="clickButton">クリック！</button>
+            <div class="cps-display" id="cpsDisplay">CPS: 0</div>
+        </div>
+        <button id="homeButton" onclick="location.href='home.html'">ホームに戻る</button>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        let cps = 0;
+
+        const cpsDisplay = document.getElementById('cpsDisplay');
+        const clickButton = document.getElementById('clickButton');
+
+        // クリックイベント
+        clickButton.addEventListener('click', () => {
+            clickCount++;
+        });
+
+        // 毎秒更新
+        setInterval(() => {
+            cps = clickCount;
+            cpsDisplay.textContent = `CPS: ${cps}`;
+            clickCount = 0;
+        }, 1000);
+    </script>
+</body>
+
+</html>
